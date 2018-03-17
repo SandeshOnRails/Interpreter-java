@@ -1,9 +1,13 @@
 
 package interpreter;
 
+import interpreter.ByteCode.ByteCode;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 
 public class ByteCodeLoader extends Object {
@@ -24,6 +28,37 @@ public class ByteCodeLoader extends Object {
      *      the newly created ByteCode instance via the init function.
      */
     public Program loadCodes() {
-       return null;
+
+        String ByteNextLine;
+        ArrayList<String> tokArray = new ArrayList<>();
+
+        program = new Program();
+
+        try {
+
+            ByteNextLine = byteSource.readLine();
+
+            while (ByteNextLine != null) {
+
+                StringTokenizer numtok = new StringTokenizer(ByteNextLine);
+                tokArray.clear();
+                String ByteNextClass = CodeTable.getClassName(numtok.nextToken());
+                ByteCode byteVal = (ByteCode) (Class.forName("interpreter.ByteCode." + ByteNextClass).newInstance());
+
+                while (numtok.hasMoreTokens()) {
+                    tokArray.add(numtok.nextToken());
+                }
+
+
+                byteVal.init(tokArray);
+                program.addByteCode(byteVal);
+                ByteNextLine = byteSource.readLine();
+
+            }
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
+        program.resolveAddrs(program);
+        return program;
     }
 }
