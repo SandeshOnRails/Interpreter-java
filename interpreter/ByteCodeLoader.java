@@ -29,30 +29,30 @@ public class ByteCodeLoader extends Object {
      */
     public Program loadCodes() {
 
-        String ByteNextLine;
-        ArrayList<String> tokArray = new ArrayList<>();
+        String line;
+        ArrayList<String> argsArr = new ArrayList<>();
 
         program = new Program();
 
         try {
 
-            ByteNextLine = byteSource.readLine();
+            line = byteSource.readLine();
 
-            while (ByteNextLine != null) {
+            while (line != null) {
 
-                StringTokenizer numtok = new StringTokenizer(ByteNextLine);
-                tokArray.clear();
-                String ByteNextClass = CodeTable.getClassName(numtok.nextToken());
-                ByteCode byteVal = (ByteCode) (Class.forName("interpreter.ByteCode." + ByteNextClass).newInstance());
+                StringTokenizer tokens = new StringTokenizer(line);
+                argsArr.clear();
+                String ByteNextClass = CodeTable.getClassName(tokens.nextToken());
+                ByteCode bytecode = (ByteCode) (Class.forName("interpreter.ByteCode." + ByteNextClass).newInstance());
 
-                while (numtok.hasMoreTokens()) {
-                    tokArray.add(numtok.nextToken());
+                while (tokens.hasMoreTokens()) {
+                    argsArr.add(tokens.nextToken());
                 }
 
 
-                byteVal.init(tokArray);
-                program.addByteCode(byteVal);
-                ByteNextLine = byteSource.readLine();
+                bytecode.init(argsArr);
+                program.addByteCode(bytecode);
+                line = byteSource.readLine();
 
             }
         } catch (Exception e) {
